@@ -1,0 +1,20 @@
+# Default values for nginx-ingress.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+fullnameOverride: ruby-client
+
+replicaCount: 1
+
+deployment:
+  namespace: ruby-client-demo
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+
+# postgres.psql-spilo-test.svc.cluster.local

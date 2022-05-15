@@ -8,6 +8,7 @@ Bundler.require(*Rails.groups)
 
 module RailsSignupThankyou
   class Application < Rails::Application
+    config.hosts << "testing-only-1028511018.us-east-2.elb.amazonaws.com"
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
 

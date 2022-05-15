@@ -1,0 +1,177 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "k8s-nginx-ingress.fullname" . }}
+  labels:
+    {{- include "k8s-nginx-ingress.labels" . | nindent 4 }}
+  namespace: {{ .Values.deployment.namespace }}
+rules:
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+      - endpoints
+      - nodes
+      - pods
+      - secrets
+      - namespaces
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - update
+  - apiGroups:
+      - ''
+    resources:
+      - nodes
+    verbs:
+      - get
+  - apiGroups:
+      - ''
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ''
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingresses/status
+    verbs:
+      - update
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingressclasses
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "k8s-nginx-ingress.fullname" . }}
+  namespace: {{ .Values.deployment.namespace }}
+  labels:
+    {{- include "k8s-nginx-ingress.labels" . | nindent 4 }}
+rules:
+  - apiGroups:
+      - ''
+    resources:
+      - namespaces
+    verbs:
+      - get
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+      - pods
+      - secrets
+      - endpoints
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ''
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingresses/status
+    verbs:
+      - update
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingressclasses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+    resourceNames:
+      - ingress-controller-leader
+    verbs:
+      - create
+      - get
+      - update
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+    verbs:
+      - create
+  - apiGroups:
+      - ''
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "k8s-nginx-ingress.fullname" . }}
+  namespace: {{ .Values.deployment.namespace }}
+  labels:
+    {{- include "k8s-nginx-ingress.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "k8s-nginx-ingress.fullname" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "k8s-nginx-ingress.fullname" . }}
+    namespace: {{ .Values.deployment.namespace }}
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ include "k8s-nginx-ingress.fullname" . }}
+  labels:
+    {{- include "k8s-nginx-ingress.labels" . | nindent 4 }}
+  namespace: {{ .Values.deployment.namespace }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "k8s-nginx-ingress.serviceAccountName" . }}
+    namespace: {{ .Values.deployment.namespace }}
+roleRef:
+  kind: ClusterRole
+  name: {{ include "k8s-nginx-ingress.fullname" . }}
+  apiGroup: rbac.authorization.k8s.io

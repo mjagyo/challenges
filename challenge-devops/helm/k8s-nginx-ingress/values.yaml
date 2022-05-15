@@ -1,0 +1,25 @@
+# Default values for k8s-nginx-ingress.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+nameOverride: nginx-ingress
+
+deployment:
+  namespace: k8s-nginx-ingress
+  nodePortHttp: 30080
+  nodePortHttps: 30443
+
+nginx:
+  replicaCount: 2
+  image: k8s.gcr.io/ingress-nginx/controller:v1.0.5@sha256:55a1fcda5b7657c372515fe402c3e39ad93aa59f6e4378e82acd99912fe6028d
+  # image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.33.0
+  cpulimit: 0.5
+  cpurequest: 0.5
+  memorylimit: 2Gi
+  memoryrequest: 2Gi
+
+
+serviceAccount:
+  create: true
+  name: k8s-service-account
+
